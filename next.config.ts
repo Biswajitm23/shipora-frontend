@@ -7,6 +7,9 @@ const API_ORIGIN = process.env.API_ORIGIN ?? "http://localhost:8000";
 const nextConfig: NextConfig = {
   // Django URLs end in "/"; keep Next.js from stripping the slash before proxying.
   skipTrailingSlashRedirect: true,
+  // Production builds use Turbopack (Next.js default); the webpack settings below are
+  // only for `npm run dev`. An explicit (empty) Turbopack config says so.
+  turbopack: {},
   // The project lives on a Windows drive under WSL, where file-change events don't
   // reach the dev server. `npm run dev` uses webpack, which can poll just the app's
   // own files (Turbopack's polling also scans node_modules and is far too slow there).
