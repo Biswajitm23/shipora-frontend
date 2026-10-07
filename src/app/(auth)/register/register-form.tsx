@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState, type FormEvent } from "react";
 
 import { Field, FormError, fieldErrors } from "@/components/field";
@@ -56,11 +57,16 @@ export function RegisterForm() {
 
   if (registeredEmail) {
     return (
-      <Alert tone="success">
-        <strong>Check your email.</strong> Your account has been created. We have sent a
-        verification link to <strong>{registeredEmail}</strong>. Open it to verify your account
-        before you start using Shipora.
-      </Alert>
+      <>
+        <Alert tone="success">
+          <strong>Check your email.</strong> Your account has been created. We have sent a
+          verification link to <strong>{registeredEmail}</strong>. Open it to verify your
+          account before you start using Shipora.
+        </Alert>
+        <p className="form-footer">
+          Already verified? <Link href="/login">Log in</Link>
+        </p>
+      </>
     );
   }
 
@@ -118,6 +124,9 @@ export function RegisterForm() {
       <button type="submit" className="btn-block" disabled={submitting} aria-busy={submitting}>
         {submitting ? "Creating account…" : "Create account"}
       </button>
+      <p className="form-footer">
+        Already have an account? <Link href="/login">Log in</Link>
+      </p>
     </form>
   );
 }

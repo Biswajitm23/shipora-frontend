@@ -20,6 +20,21 @@ export class ApiError extends Error {
   }
 }
 
+// Access token: in memory only; the auth layer (lib/auth.tsx) sets it.
+let accessToken: string | null = null;
+
+export function setAccessToken(token: string | null): void {
+  accessToken = token;
+}
+
+// Called once when an authenticated request gets a 401 (expired access token).
+// Returns a fresh access token, or null when the session can't be renewed.
+let refreshHandler: (() => Promise<string | null>) | null = null;
+
+export function setRefreshHandler(handler: (() => Promise<string | null>) | null): void {
+  refreshHandler = handler;
+}
+
 function baseUrl(): string {
   if (typeof window === "undefined") {
     return process.env.API_ORIGIN ?? "http://localhost:8000";
@@ -71,9 +86,15 @@ export function toApiError(status: number, body: unknown): ApiError {
 
 type Method = "GET" | "POST";
 
-async function request<T>(method: Method, path: string, body?: unknown): Promise<T> {
+async function request<T>(
+  method: Method,
+  path: string,
+  body?: unknown,
+  retried = false,
+): Promise<T> {
   const headers: Record<string, string> = { Accept: "application/json" };
   if (body !== undefined) headers["Content-Type"] = "application/json";
+  if (accessToken) headers.Authorization = `Bearer ${accessToken}`;
 
   let response: Response;
   try {
@@ -85,6 +106,10 @@ async function request<T>(method: Method, path: string, body?: unknown): Promise
     });
   } catch {
     throw new ApiError("Can't reach the server. Check your connection and try again.", 0);
+  }
+
+  if (response.status === 401 && accessToken && refreshHandler && !retried) {
+    if (await refreshHandler()) return request<T>(method, path, body, true);
   }
 
   const text = await response.text();

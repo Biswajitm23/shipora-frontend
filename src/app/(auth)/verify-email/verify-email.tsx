@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
@@ -35,5 +36,14 @@ export function VerifyEmail() {
 
   if (!token) return <Alert tone="error">{INVALID_LINK}</Alert>;
   if (!result) return <Loading label="Verifying your email address…" />;
-  return <Alert tone={result.ok ? "success" : "error"}>{result.message}</Alert>;
+  return (
+    <>
+      <Alert tone={result.ok ? "success" : "error"}>{result.message}</Alert>
+      {result.ok && (
+        <Link href="/login" className="btn btn-block">
+          Log in
+        </Link>
+      )}
+    </>
+  );
 }
