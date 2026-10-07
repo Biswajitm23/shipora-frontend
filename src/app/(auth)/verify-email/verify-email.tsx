@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { ResendVerification } from "@/components/resend-verification";
 import { Alert, Loading } from "@/components/states";
 import { api, ApiError } from "@/lib/api";
 
@@ -34,16 +35,23 @@ export function VerifyEmail() {
     };
   }, [token]);
 
-  if (!token) return <Alert tone="error">{INVALID_LINK}</Alert>;
-  if (!result) return <Loading label="Verifying your email address…" />;
-  return (
-    <>
-      <Alert tone={result.ok ? "success" : "error"}>{result.message}</Alert>
-      {result.ok && (
+  if (token && !result) return <Loading label="Verifying your email address…" />;
+
+  if (result?.ok) {
+    return (
+      <>
+        <Alert tone="success">{result.message}</Alert>
         <Link href="/login" className="btn btn-block">
           Log in
         </Link>
-      )}
+      </>
+    );
+  }
+
+  return (
+    <>
+      <Alert tone="error">{result?.message ?? INVALID_LINK}</Alert>
+      <ResendVerification />
     </>
   );
 }

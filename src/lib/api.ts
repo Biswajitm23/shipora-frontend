@@ -11,12 +11,20 @@ export type FieldErrors = Record<string, string[]>;
 export class ApiError extends Error {
   readonly status: number;
   readonly fieldErrors: FieldErrors;
+  /** Machine-readable reason from the server, e.g. "email_not_verified". */
+  readonly code: string | null;
 
-  constructor(message: string, status: number, fieldErrors: FieldErrors = {}) {
+  constructor(
+    message: string,
+    status: number,
+    fieldErrors: FieldErrors = {},
+    code: string | null = null,
+  ) {
     super(message);
     this.name = "ApiError";
     this.status = status;
     this.fieldErrors = fieldErrors;
+    this.code = code;
   }
 }
 
@@ -71,8 +79,10 @@ function flatten(value: unknown, prefix: string, out: FieldErrors): void {
 /** Map a DRF error body ({"detail"}, {"field": [...]}, non_field_errors) to an ApiError. */
 export function toApiError(status: number, body: unknown): ApiError {
   if (body && typeof body === "object" && !Array.isArray(body)) {
-    const detail = (body as { detail?: unknown }).detail;
-    if (typeof detail === "string") return new ApiError(detail, status);
+    const { detail, code } = body as { detail?: unknown; code?: unknown };
+    if (typeof detail === "string") {
+      return new ApiError(detail, status, {}, typeof code === "string" ? code : null);
+    }
   }
 
   const fieldErrors: FieldErrors = {};

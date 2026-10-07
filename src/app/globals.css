@@ -415,6 +415,18 @@ button[aria-busy="true"] {
   animation: enter-up 240ms var(--ease-out) both;
 }
 
+.form-note {
+  margin: 0;
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+}
+
+.resend-form {
+  margin-top: var(--space-5);
+  padding-top: var(--space-5);
+  border-top: var(--border);
+}
+
 .form-footer {
   margin: 0;
   color: var(--color-text-muted);
