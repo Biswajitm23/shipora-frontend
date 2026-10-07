@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
+
+import { SiteHeader } from "@/components/site-header";
+import { AuthProvider } from "@/lib/auth";
 
 import "./globals.css";
 
@@ -12,20 +14,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en">
       <body>
-        <header className="site-header">
-          <div className="container bar">
-            <Link href="/" className="brand">
-              <span className="brand-mark" aria-hidden="true">
-                SP
-              </span>
-              Shipora
-            </Link>
-            <Link href="/register" className="btn btn-small">
-              Create account
-            </Link>
-          </div>
-        </header>
-        {children}
+        <AuthProvider>
+          <SiteHeader />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );
