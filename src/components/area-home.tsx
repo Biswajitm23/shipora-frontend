@@ -1,5 +1,7 @@
 "use client";
 
+import type { ReactNode } from "react";
+
 import { PageHeader } from "@/components/page-header";
 import { AREA_NAMES, RequireAuth, useAuth, type Role } from "@/lib/auth";
 
@@ -7,15 +9,15 @@ import { AREA_NAMES, RequireAuth, useAuth, type Role } from "@/lib/auth";
  * The landing page of an account area after login. The full dashboards come with
  * DASH-001..004; until then each area greets its user.
  */
-export function AreaHome({ role }: { role: Role }) {
+export function AreaHome({ role, actions }: { role: Role; actions?: ReactNode }) {
   return (
     <RequireAuth role={role}>
-      <AreaWelcome role={role} />
+      <AreaWelcome role={role} actions={actions} />
     </RequireAuth>
   );
 }
 
-function AreaWelcome({ role }: { role: Role }) {
+function AreaWelcome({ role, actions }: { role: Role; actions?: ReactNode }) {
   const auth = useAuth();
   const name = auth.status === "authenticated" ? auth.user.first_name : "";
   return (
@@ -24,6 +26,7 @@ function AreaWelcome({ role }: { role: Role }) {
         title={`Welcome${name ? `, ${name}` : ""}`}
         lead={`This is your ${AREA_NAMES[role]} dashboard.`}
       />
+      {actions && <div className="actions">{actions}</div>}
     </main>
   );
 }

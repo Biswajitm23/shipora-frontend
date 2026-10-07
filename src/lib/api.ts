@@ -84,7 +84,7 @@ export function toApiError(status: number, body: unknown): ApiError {
   return new ApiError(general.join(" ") || statusMessage(status), status, fieldErrors);
 }
 
-type Method = "GET" | "POST";
+type Method = "GET" | "POST" | "PATCH";
 
 async function request<T>(
   method: Method,
@@ -129,4 +129,5 @@ async function request<T>(
 export const api = {
   get: <T>(path: string) => request<T>("GET", path),
   post: <T>(path: string, body?: unknown) => request<T>("POST", path, body),
+  patch: <T>(path: string, body?: unknown) => request<T>("PATCH", path, body),
 };
