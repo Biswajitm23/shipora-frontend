@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState, type FormEvent } from "react";
 
 import { PageHeader } from "@/components/page-header";
@@ -51,6 +53,10 @@ export function UserManagement() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [notice, setNotice] = useState<Notice | null>(null);
   const [busyId, setBusyId] = useState<number | null>(null);
+  // Coming back from "Add user": ?added=<name>.
+  const added = useSearchParams().get("added");
+  const shownNotice: Notice | null =
+    notice ?? (added ? { tone: "success", text: `${added} has been added.` } : null);
 
   useEffect(() => {
     let cancelled = false;
@@ -101,6 +107,11 @@ export function UserManagement() {
   return (
     <main>
       <PageHeader title="Manage users" lead="View accounts and control who can use Shipora." />
+      <div className="actions page-actions">
+        <Link href="/admin/users/new" className="btn">
+          Add user
+        </Link>
+      </div>
 
       <div className="toolbar">
         <form className="toolbar-search" onSubmit={onSearch} role="search">
@@ -131,7 +142,7 @@ export function UserManagement() {
         </label>
       </div>
 
-      {notice && <Alert tone={notice.tone}>{notice.text}</Alert>}
+      {shownNotice && <Alert tone={shownNotice.tone}>{shownNotice.text}</Alert>}
 
       {loadError ? (
         <Alert tone="error">{loadError}</Alert>
