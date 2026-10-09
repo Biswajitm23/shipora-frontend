@@ -21,6 +21,7 @@ import {
 } from "react";
 
 import { Loading } from "@/components/states";
+import { can, type Permission } from "@/lib/access";
 import { api, setAccessToken, setRefreshHandler } from "@/lib/api";
 
 export type Role = "CUSTOMER" | "STAFF" | "AGENT" | "ADMIN";
@@ -33,6 +34,7 @@ export type User = {
   phone: string;
   role: Role;
   email_verified: boolean;
+  permissions: Permission[];
 };
 
 type LoginResult = { access: string; refresh: string; user: User };
@@ -162,14 +164,26 @@ export function useAuth(): AuthContextValue {
 /**
  * Guard for an account area. Logged-out visitors go to /login (and come back
  * afterwards), except right after logging out, which goes to the home page; a user
- * of another account type goes to their own area.
+ * of another account type, or without the page's access rule (ROLE-002), goes to
+ * their own area.
  */
-export function RequireAuth({ role, children }: { role: Role; children: ReactNode }) {
+export function RequireAuth({
+  role,
+  permission,
+  children,
+}: {
+  role: Role;
+  permission?: Permission;
+  children: ReactNode;
+}) {
   const auth = useAuth();
   const router = useRouter();
   const pathname = usePathname();
 
-  const allowed = auth.status === "authenticated" && auth.user.role === role;
+  const allowed =
+    auth.status === "authenticated" &&
+    auth.user.role === role &&
+    (!permission || can(auth.user, permission));
 
   useEffect(() => {
     if (auth.status === "anonymous") {

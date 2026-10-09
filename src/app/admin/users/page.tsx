@@ -10,7 +10,7 @@ export const metadata: Metadata = { title: "Manage users | Shipora" };
 
 export default function ManageUsersPage() {
   return (
-    <RequireAuth role="ADMIN">
+    <RequireAuth role="ADMIN" permission="manage_users">
       <Suspense fallback={<Loading />}>
         <UserManagement />
       </Suspense>
