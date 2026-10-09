@@ -409,6 +409,21 @@ button[aria-busy="true"] {
   border-color: var(--color-error);
 }
 
+.check {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  cursor: pointer;
+}
+
+.check input {
+  width: 1.1rem;
+  height: 1.1rem;
+  accent-color: var(--color-primary);
+  cursor: pointer;
+}
+
 .field-error {
   color: var(--color-error);
   font-size: var(--text-sm);

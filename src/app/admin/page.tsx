@@ -10,9 +10,14 @@ export default function AdminPage() {
     <AreaHome
       role="ADMIN"
       actions={
-        <Link href="/admin/users" className="btn">
-          Manage users
-        </Link>
+        <>
+          <Link href="/admin/users" className="btn">
+            Manage users
+          </Link>
+          <Link href="/admin/countries" className="btn">
+            Manage countries
+          </Link>
+        </>
       }
     />
   );
