@@ -384,7 +384,8 @@ button[aria-busy="true"] {
   font-weight: 600;
 }
 
-.field input {
+.field input,
+.field textarea {
   width: 100%;
   min-height: var(--control-height);
   padding: var(--space-2) var(--space-3);
@@ -396,11 +397,13 @@ button[aria-busy="true"] {
   transition: border-color var(--transition), box-shadow var(--transition);
 }
 
-.field input:hover {
+.field input:hover,
+.field textarea:hover {
   border-color: var(--color-text-muted);
 }
 
-.field input:focus-visible {
+.field input:focus-visible,
+.field textarea:focus-visible {
   border-color: var(--color-primary);
   box-shadow: var(--focus-ring);
 }
@@ -422,6 +425,10 @@ button[aria-busy="true"] {
   height: 1.1rem;
   accent-color: var(--color-primary);
   cursor: pointer;
+}
+
+.field textarea {
+  resize: vertical;
 }
 
 .field-error {
@@ -721,4 +728,57 @@ button[aria-busy="true"] {
 .access-list li:hover {
   transform: translateY(-1px);
   box-shadow: var(--shadow-sm);
+}
+
+/* ---------- Service cards (SERV-001) ---------- */
+
+.service-grid {
+  display: grid;
+  gap: var(--space-4);
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+
+.service-card {
+  display: grid;
+  align-content: start;
+  gap: var(--space-3);
+  animation: enter-up var(--enter-duration) var(--ease-out) both;
+  transition: box-shadow var(--transition), transform var(--transition);
+}
+
+.service-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
+}
+
+.service-card h2 {
+  margin: 0;
+  font-size: var(--text-lg);
+}
+
+.service-card p {
+  margin: 0;
+  color: var(--color-text-muted);
+}
+
+.service-facts {
+  display: grid;
+  gap: var(--space-1);
+  margin: 0;
+  font-size: var(--text-sm);
+}
+
+.service-facts div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.service-facts dt {
+  color: var(--color-text-muted);
+}
+
+.service-facts dd {
+  margin: 0;
+  font-weight: 600;
 }
