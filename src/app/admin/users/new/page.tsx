@@ -9,7 +9,7 @@ export const metadata: Metadata = { title: "Add user | Shipora" };
 
 export default function AddUserPage() {
   return (
-    <RequireAuth role="ADMIN">
+    <RequireAuth role="ADMIN" permission="manage_users">
       <main className="narrow">
         <PageHeader title="Add user" lead="Create an account and choose its account type." />
         <div className="card">
