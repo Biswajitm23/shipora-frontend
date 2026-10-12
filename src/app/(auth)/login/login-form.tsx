@@ -45,30 +45,41 @@ export function LoginForm() {
   return (
     <>
       <form className="form" onSubmit={onSubmit} noValidate>
-        <FormError error={error} />
-        <Field
-          label="Email address"
-          name="email"
-          type="email"
-          autoComplete="email"
-          required
-          errors={fieldErrors(error, "email")}
-        />
-        <Field
-          label="Password"
-          name="password"
-          type="password"
-          autoComplete="current-password"
-          required
-          errors={fieldErrors(error, "password")}
-        />
-        <button type="submit" className="btn-block" disabled={submitting} aria-busy={submitting}>
-          {submitting ? "Logging in…" : "Log in"}
-        </button>
-        <p className="form-footer">
-          New to Shipora? <Link href="/register">Create an account</Link>
-        </p>
-      </form>
+  <FormError error={error} />
+
+  <Field
+    label="Email address"
+    name="email"
+    type="email"
+    autoComplete="email"
+    required
+    errors={fieldErrors(error, "email")}
+  />
+
+  <Field
+    label="Password"
+    name="password"
+    type="password"
+    autoComplete="current-password"
+    required
+    errors={fieldErrors(error, "password")}
+  />
+
+  <p className="remember-me">Remember me</p>
+
+  <button
+    type="submit"
+    className="btn-block"
+    disabled={submitting}
+    aria-busy={submitting}
+  >
+    {submitting ? "Logging in…" : "Log in"}
+  </button>
+
+  <p className="form-footer">
+    New to Shipora? <Link href="/register">Create an account</Link>
+  </p>
+</form>
       {notVerified && <ResendVerification key={email} email={email} />}
     </>
   );
