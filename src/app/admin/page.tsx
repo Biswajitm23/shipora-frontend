@@ -17,6 +17,9 @@ export default function AdminPage() {
           <Link href="/admin/countries" className="btn">
             Manage countries
           </Link>
+          <Link href="/admin/services" className="btn">
+            Manage services
+          </Link>
         </>
       }
     />
