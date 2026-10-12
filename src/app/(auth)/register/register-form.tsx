@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, type FormEvent } from "react";
 
 import { Field, FormError, fieldErrors } from "@/components/field";
+import { ResendVerification } from "@/components/resend-verification";
 import { Alert } from "@/components/states";
 import { api, ApiError } from "@/lib/api";
 
@@ -16,12 +17,14 @@ type RegisterInput = {
   password_confirm: string;
 };
 
-type RegisteredUser = { email: string };
+// The server says what happened: `detail` is the message to show, and whether the
+// verification email went out (a new account, or one that was never verified).
+type Registered = { email: string; detail: string; verification_email_sent: boolean };
 
 export function RegisterForm() {
   const [error, setError] = useState<unknown>(null);
   const [submitting, setSubmitting] = useState(false);
-  const [registeredEmail, setRegisteredEmail] = useState<string | null>(null);
+  const [registered, setRegistered] = useState<Registered | null>(null);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -46,8 +49,7 @@ export function RegisterForm() {
     setSubmitting(true);
     setError(null);
     try {
-      const user = await api.post<RegisteredUser>("/api/auth/register/", input);
-      setRegisteredEmail(user.email);
+      setRegistered(await api.post<Registered>("/api/auth/register/", input));
     } catch (err) {
       setError(err);
     } finally {
@@ -55,14 +57,19 @@ export function RegisterForm() {
     }
   }
 
-  if (registeredEmail) {
+  if (registered) {
     return (
       <>
-        <Alert tone="success">
-          <strong>Check your email.</strong> Your account has been created. We have sent a
-          verification link to <strong>{registeredEmail}</strong>. Open it to verify your
-          account before you start using Shipora.
-        </Alert>
+        {registered.verification_email_sent ? (
+          <Alert tone="success">
+            <strong>Check your email.</strong> {registered.detail} Open the link we sent to{" "}
+            <strong>{registered.email}</strong> to verify your account before you start using
+            Shipora.
+          </Alert>
+        ) : (
+          <Alert tone="error">{registered.detail}</Alert>
+        )}
+        <ResendVerification email={registered.email} />
         <p className="form-footer">
           Already verified? <Link href="/login">Log in</Link>
         </p>
