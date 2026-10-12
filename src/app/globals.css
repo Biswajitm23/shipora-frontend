@@ -557,6 +557,14 @@ button[aria-busy="true"] {
   text-align: right;
 }
 
+/* A longer second line under a cell's main text (e.g. a description). */
+.table-note {
+  min-width: 16rem;
+  max-width: 28rem;
+  color: var(--color-text-muted);
+  white-space: normal;
+}
+
 /* ---------- Status badges ---------- */
 
 .badge {

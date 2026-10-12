@@ -71,7 +71,7 @@ export function ServiceManagement() {
       const saved = await api.patch<Service>(`/api/services/${service.id}/`, {
         is_active: isActive,
       });
-      setServices((list) => list?.map((c) => (c.id === saved.id ? saved : c)) ?? null);
+      setServices((list) => list?.map((s) => (s.id === saved.id ? saved : s)) ?? null);
       setNotice({
         tone: "success",
         text: `${saved.name} has been ${isActive ? "activated" : "deactivated"}.`,
@@ -87,7 +87,7 @@ export function ServiceManagement() {
     <main>
       <PageHeader
         title="Manage services"
-        lead="The services Shipora ships to. Only active services can be used for new shipments."
+        lead="The delivery services Shipora offers. Customers only see the active services."
       />
       <div className="actions page-actions">
         <Link href="/admin/services/new" className="btn">
@@ -99,7 +99,7 @@ export function ServiceManagement() {
         <form className="toolbar-search" onSubmit={onSearch} role="search">
           <label className="field">
             <span>Search</span>
-            <input name="search" type="search" placeholder="Name, code, currency or zone" />
+            <input name="search" type="search" placeholder="Name or description" />
           </label>
           <button type="submit">Search</button>
         </form>
@@ -125,7 +125,7 @@ export function ServiceManagement() {
           <p>
             {query.search || query.status
               ? "Try a different search or clear the filters."
-              : "Add the first service Shipora ships to."}
+              : "Add the first service Shipora offers."}
           </p>
         </div>
       ) : (
@@ -133,11 +133,10 @@ export function ServiceManagement() {
           <table className="table">
             <thead>
               <tr>
-                <th scope="col">Country</th>
-                <th scope="col">Code</th>
-                <th scope="col">Currency</th>
-                <th scope="col">Shipping zone</th>
-                <th scope="col">Tax</th>
+                <th scope="col">Service</th>
+                <th scope="col">Estimated delivery</th>
+                <th scope="col">Weight limit</th>
+                <th scope="col">International</th>
                 <th scope="col">Status</th>
                 <th scope="col">
                   <span className="visually-hidden">Actions</span>
@@ -147,13 +146,13 @@ export function ServiceManagement() {
             <tbody>
               {services.map((service) => (
                 <tr key={service.id}>
-                  <td>{service.name}</td>
-                  <td>{service.code}</td>
                   <td>
-                    {service.currency} ({service.currency_symbol})
+                    <strong>{service.name}</strong>
+                    <div className="table-note">{service.description}</div>
                   </td>
-                  <td>{service.shipping_zone}</td>
-                  <td>{Number(service.tax_percentage)}%</td>
+                  <td>{service.estimated_delivery}</td>
+                  <td>Up to {Number(service.weight_limit_kg)} kg</td>
+                  <td>{service.is_international ? "Yes" : "No"}</td>
                   <td>
                     <span className={`badge ${service.is_active ? "badge-success" : "badge-muted"}`}>
                       {service.is_active ? "Active" : "Inactive"}
