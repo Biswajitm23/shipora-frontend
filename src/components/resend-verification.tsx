@@ -10,7 +10,9 @@ import { api } from "@/lib/api";
 export function ResendVerification({ email = "" }: { email?: string }) {
   const [error, setError] = useState<unknown>(null);
   const [sending, setSending] = useState(false);
-  const [sent, setSent] = useState<string | null>(null);
+  // The server's answer; `email_delivery: "captured"` in local development, where
+  // the email is kept on the machine instead of being delivered.
+  const [sent, setSent] = useState<{ detail: string; email_delivery?: string } | null>(null);
 
   async function onSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -18,10 +20,12 @@ export function ResendVerification({ email = "" }: { email?: string }) {
     setSending(true);
     setError(null);
     try {
-      const { detail } = await api.post<{ detail: string }>("/api/auth/resend-verification/", {
-        email: value,
-      });
-      setSent(detail);
+      setSent(
+        await api.post<{ detail: string; email_delivery?: string }>(
+          "/api/auth/resend-verification/",
+          { email: value },
+        ),
+      );
     } catch (err) {
       setError(err);
     } finally {
@@ -29,7 +33,11 @@ export function ResendVerification({ email = "" }: { email?: string }) {
     }
   }
 
-  if (sent) return <Alert tone="success">{sent}</Alert>;
+  if (sent) {
+    return (
+      <Alert tone={sent.email_delivery === "captured" ? "info" : "success"}>{sent.detail}</Alert>
+    );
+  }
 
   return (
     <form className="form resend-form" onSubmit={onSubmit} noValidate>

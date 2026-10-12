@@ -17,9 +17,15 @@ type RegisterInput = {
   password_confirm: string;
 };
 
-// The server says what happened: `detail` is the message to show, and whether the
-// verification email went out (a new account, or one that was never verified).
-type Registered = { email: string; detail: string; verification_email_sent: boolean };
+// The server says what happened: `detail` is the message to show, and what became of
+// the verification email: sent, "captured" (local development: kept on the machine,
+// never delivered) or failed.
+type Registered = {
+  email: string;
+  detail: string;
+  verification_email_sent: boolean;
+  email_delivery?: "sent" | "captured" | "failed";
+};
 
 export function RegisterForm() {
   const [error, setError] = useState<unknown>(null);
@@ -67,7 +73,9 @@ export function RegisterForm() {
             Shipora.
           </Alert>
         ) : (
-          <Alert tone="error">{registered.detail}</Alert>
+          <Alert tone={registered.email_delivery === "captured" ? "info" : "error"}>
+            {registered.detail}
+          </Alert>
         )}
         <ResendVerification email={registered.email} />
         <p className="form-footer">
